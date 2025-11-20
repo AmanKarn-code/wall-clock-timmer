@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Edit Timer Wall Clock</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<div class="container">
+    <div class="clock">
+        <div class="hand hour" id="hourHand"></div>
+        <div class="hand minute" id="minuteHand"></div>
+        <div class="hand second" id="secondHand"></div>
+        <div class="center-dot"></div>
+    </div>
+
+    <div class="controls">
+        <input type="number" id="timeInput" value="30" min="1" />
+        <span>min</span>
+
+        <button id="startBtn">Start</button>
+        <button id="pauseBtn" disabled>Pause</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

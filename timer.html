@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Pomodoro Clock</title>
+<style>
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+  }
+
+  .clock {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    border: 10px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(255,255,255,0.1);
+    margin-bottom: 40px;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.05), transparent);
+  }
+
+  .hand {
+    position: absolute;
+    width: 50%;
+    height: 4px;
+    top: 50%;
+    left: 50%;
+    background: #fff;
+    transform-origin: 100% 50%; /* rotate around the base */
+    transform: rotate(-90deg);  /* point up initially */
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.7);
+    transition: transform 0.05s linear;
+  }
+
+  .hour-hand { height: 6px; background: #ffec99; }
+  .minute-hand { height: 4px; background: #88f; }
+  .second-hand { height: 2px; background: #f55; }
+
+  .digital {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
+  }
+
+  .controls button {
+    font-size: 1.2rem;
+    padding: 12px 25px;
+    margin: 0 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .controls button:hover {
+    background: rgba(255,255,255,0.4);
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 600px) {
+    .clock { width: 250px; height: 250px; }
+    .digital { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="clock" id="clock">
+  <div class="hand hour-hand" id="hourHand"></div>
+  <div class="hand minute-hand" id="minuteHand"></div>
+  <div class="hand second-hand" id="secondHand"></div>
+</div>
+
+<div class="digital" id="digital">30:00</div>
+
+<div class="controls">
+  <button id="startBtn">Start</button>
+  <button id="pauseBtn">Pause</button>
+</div>
+
+<script>
+let totalSeconds = 30 * 60; // 30-minute Pomodoro
+let speed = 10; // 10x faster for 0.1x slow-motion recording
+let timerRunning = false;
+let startTime;
+let elapsedPaused = 0;
+let interval;
+
+const hourHand = document.getElementById("hourHand");
+const minuteHand = document.getElementById("minuteHand");
+const secondHand = document.getElementById("secondHand");
+const digital = document.getElementById("digital");
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+
+function updateClock(secondsLeft) {
+    const total = 30 * 60;
+    let progress = (total - secondsLeft) / total;
+
+    // Analog hands rotation (adjust -90deg for vertical start)
+    let hourDeg = progress * 360 * (1 / 12) - 90;
+    let minuteDeg = progress * 360 - 90;
+    let secondDeg = (total - secondsLeft) * 6 - 90;
+
+    hourHand.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+    minuteHand.style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
+    secondHand.style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+
+    // Digital timer
+    let min = Math.floor(secondsLeft / 60);
+    let sec = Math.floor(secondsLeft % 60);
+    digital.textContent = `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function startTimer() {
+    if(timerRunning) return;
+    timerRunning = true;
+    startBtn.disabled = true;
+    startTime = Date.now() - elapsedPaused * 1000;
+
+    interval = setInterval(() => {
+        const elapsed = ((Date.now() - startTime) / 1000) * speed;
+        let remaining = totalSeconds - elapsed;
+
+        if (remaining <= 0) {
+            remaining = 0;
+            updateClock(remaining);
+            clearInterval(interval);
+            alert("⏳ Time's Up!");
+            timerRunning = false;
+            elapsedPaused = 0;
+            startBtn.disabled = false;
+            return;
+        }
+
+        updateClock(remaining);
+        elapsedPaused = elapsed;
+    }, 50);
+}
+
+function pauseTimer() {
+    if(!timerRunning) return;
+    clearInterval(interval);
+    timerRunning = false;
+    startBtn.disabled = false;
+}
+
+startBtn.addEventListener("click", startTimer);
+pauseBtn.addEventListener("click", pauseTimer);
+
+// Initialize
+updateClock(totalSeconds);
+</script>
+
+</body>
+</html>
