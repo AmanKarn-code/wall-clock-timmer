@@ -14,20 +14,23 @@ body {
 }
 
 .clock-wrapper {
-    width: 312px; /* border + clock size */
+    width: 312px; /* slightly bigger than clock for border */
     height: 312px;
     border-radius: 50%;
-    background: conic-gradient(#ff8c00, #00ff3e, #8c00ff, #ff8c00);
+    background: conic-gradient(#ff8c00, #ff0080, #56ff00, #ff8c00);
     display: flex;
     justify-content: center;
     align-items: center;
+    /* Beautiful glowing shadow */
+    box-shadow: 
+        0 0 20px rgba(39, 39, 38, 0.5)
 }
 
 .clock {
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    background: #d7e1a3; /* clock face */
+    background: #ffffff; /* clock face */
     position: relative;
 }
 
